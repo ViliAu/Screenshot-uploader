@@ -1,0 +1,1 @@
+pyinstaller.exe --icon=test.ico -F --noconsole test.py
