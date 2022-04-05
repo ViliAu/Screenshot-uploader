@@ -1,14 +1,15 @@
 # This class handles the grayed-out overlay which occurs when the program is started
 
 import tkinter as tk
-import util.ss_screenshotter as ss_screenshotter
-import util.ss_multi_monitor_util as ss_multi_monitor_util
+import util.screen_recorder as screen_recorder
+import util.multi_monitor_util as multi_monitor_util
 
 ALPHACOLOR = "blue"
 ALPHA = 0.3
 OUTLINE = "white"
 CURSOR = "tcross"
 
+shift_down = False
 pos1 = -1, -1
 pos2 = -1, -1
 
@@ -28,7 +29,7 @@ def click_end(event):
     pos2 = (event.x, event.y)
     print(pos1, pos2)
     root.attributes('-alpha', 0)
-    ss_screenshotter.take_screenshot(pos1, pos2)
+    screen_recorder.take_screenshot(pos1, pos2)
     close_program()
 
 def close_program(event=None):
@@ -43,9 +44,7 @@ def setup_overlay():
     root.configure(bg='blue')
     root.wm_attributes("-transparentcolor", ALPHACOLOR)
     root.wm_attributes("-alpha", ALPHA)
-
-    root.geometry(ss_multi_monitor_util.get_overlay_bounds()) #TODO Remove hard coded dimensions, detect main screen etc etc
-
+    root.geometry(multi_monitor_util.get_overlay_bounds())
     root.wm_attributes('-topmost', 1)
     root.overrideredirect(True)
 

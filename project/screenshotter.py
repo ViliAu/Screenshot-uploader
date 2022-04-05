@@ -1,8 +1,8 @@
-import util.ss_overlay as ss_overlay 
+import util.app_gui as app_gui 
 
 def init_root():
     # setup root
-    root = ss_overlay.setup_overlay()
+    root = app_gui.setup_overlay()
     # Start main loop
     root.mainloop()
 

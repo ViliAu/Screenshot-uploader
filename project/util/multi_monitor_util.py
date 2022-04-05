@@ -4,7 +4,7 @@ screenshot_offset = (0,0)
 
 def get_overlay_bounds():
     monitors = get_monitors()
-    min_pos = [2000, 2000]
+    min_pos = [200000, 200000]
     max_pos = [-1, -1]
     for monitor in monitors:
         min_pos[0] = min(min_pos[0], monitor.x)

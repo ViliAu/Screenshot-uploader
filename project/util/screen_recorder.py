@@ -1,6 +1,6 @@
 import mss
 import mss.tools
-import util.ss_multi_monitor_util as mmu
+import util.multi_monitor_util as mmu
 
 def take_screenshot(pos1, pos2):
     of = mmu.screenshot_offset
