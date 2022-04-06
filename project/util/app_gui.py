@@ -12,13 +12,13 @@ CURSOR = "tcross"
 shift_down = False
 pos1 = -1, -1
 pos2 = -1, -1
+video = False
 
 def track_bounds(event):
     if (pos1[0] > -1):
         canvas.delete("all")
         end = event.x, event.y
         canvas.create_rectangle(pos1 + end,  fill=ALPHACOLOR, outline=OUTLINE, width=2)
-    
 
 def click_start(event):
     global pos1
@@ -27,9 +27,17 @@ def click_start(event):
 def click_end(event):
     global pos2
     pos2 = (event.x, event.y)
-    print(pos1, pos2)
     root.attributes('-alpha', 0)
     screen_recorder.take_screenshot(pos1, pos2)
+    close_program()
+
+def click_end_video(event):
+    global pos2
+    pos2 = (event.x, event.y)
+    canvas.configure(bg=ALPHACOLOR)
+    canvas.update_idletasks() # Workaround
+    video_frames = screen_recorder.record_frames(pos1, pos2)
+    screen_recorder.write_video(pos1, pos2, video_frames)
     close_program()
 
 def close_program(event=None):
@@ -61,4 +69,5 @@ def apply_bindings(root: tk.Tk):
     root.bind('<Motion>', track_bounds)
     root.bind('<Button-1>', click_start)
     root.bind('<ButtonRelease-1>', click_end)
+    root.bind('<Control-ButtonRelease-1>', click_end_video)
     root.bind('<Escape>', close_program)
