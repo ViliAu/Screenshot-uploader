@@ -8,7 +8,7 @@ import util.multi_monitor_util as mmu
 VIDEO_LENGTH = 5
 FPS = 24
 MIN_AREA_WIDTH = 8
-COMPRESSION_LEVEL = 3 #The higher the lower compression
+COMPRESSION_LEVEL = 2 #The higher the lower compression
 
 def take_screenshot(pos1, pos2):
     # Normalize area
@@ -28,15 +28,18 @@ def record_frames(pos1, pos2):
     if (bounds[2]-bounds[0] < MIN_AREA_WIDTH or bounds[3]-bounds[1] < MIN_AREA_WIDTH):
         return
     frames = []
-    start = time.time()
-    last = time.time()
+
     with mss.mss() as sct:
         sct.compression_level = COMPRESSION_LEVEL
-        last = time.time()
-        while (last < VIDEO_LENGTH + start):
-            if (time.time() > last + (1/FPS)):
-                frames.append(numpy.array(sct.grab(bounds)))
-                last = time.time()
+        frame_start = time.perf_counter()
+        start = time.perf_counter()
+        while (frame_start < VIDEO_LENGTH + start):
+            frames.append(numpy.array(sct.grab(bounds)))
+            delta = time.perf_counter() - frame_start
+            if (delta < float(1/FPS)):
+                time.sleep(1/FPS-delta)
+            frame_start = time.perf_counter()
+    
     return frames
 
 def write_video(pos1, pos2, frames):

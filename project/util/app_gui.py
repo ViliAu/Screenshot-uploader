@@ -1,4 +1,5 @@
 # This class handles the grayed-out overlay which occurs when the program is started
+#TODO rework
 
 import tkinter as tk
 import util.screen_recorder as screen_recorder
