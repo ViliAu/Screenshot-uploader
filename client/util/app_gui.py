@@ -1,5 +1,5 @@
 # This class handles the grayed-out overlay which occurs when the program is started
-#TODO rework
+#TODO rework => muuta classiks
 
 import threading
 import tkinter as tk
@@ -15,12 +15,14 @@ shift_down = False
 pos1 = -1, -1
 pos2 = -1, -1
 video = False
+recording = False
 
 def track_bounds(event):
-    if (pos1[0] > -1):
-        canvas.delete("all")
-        end = event.x, event.y
-        canvas.create_rectangle(pos1 + end,  fill=ALPHACOLOR, outline=OUTLINE, width=2)
+    if (not recording):
+        if (pos1[0] > -1):
+            canvas.delete("all")
+            end = event.x, event.y
+            canvas.create_rectangle(pos1 + end,  fill=ALPHACOLOR, outline=OUTLINE, width=2)
 
 def click_start(event):
     global pos1
@@ -39,6 +41,8 @@ def click_end_video(event):
     canvas.configure(bg=ALPHACOLOR)
     #canvas.update_idletasks() # Workaround
     thread = threading.Thread(target=screen_recorder.record_frames, args=(pos1, pos2, root,))
+    global recording
+    recording = True
     thread.start()
     #video_frames = screen_recorder.record_frames(pos1, pos2) # Täs on nyt bugi... tee tää toisel threadil nii alkaa homma toimimaa
     #screen_recorder.write_video(pos1, pos2, video_frames)
