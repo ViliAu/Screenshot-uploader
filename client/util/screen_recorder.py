@@ -34,6 +34,7 @@ def record_frames(pos1, pos2, root):
         sct.compression_level = COMPRESSION_LEVEL
         frame_start = time.perf_counter()
         start = time.perf_counter()
+        # TODO More accurate frame counter
         while (frame_start < VIDEO_LENGTH + start):
             frames.append(numpy.array(sct.grab(bounds)))
             delta = time.perf_counter() - frame_start
@@ -52,7 +53,7 @@ def write_video(pos1, pos2, frames, root):
     for frame in frames:
         video.write(frame)
     video.release()
-    root.after(10, root.destroy) # Workaround korjaa joskus
+    root.after(10, root.destroy) # TODO Workaround korjaa joskus
 
 def get_screen_bounds(pos1, pos2):
     of = mmu.screenshot_offset
