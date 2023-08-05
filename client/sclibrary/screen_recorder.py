@@ -3,10 +3,10 @@ import mss.tools
 import cv2
 import numpy
 import time
-import util.multi_monitor_util as mmu
-import util.app_gui as gui
+import sclibrary.multi_monitor_util as mmu
+import sclibrary.app_gui as gui
 
-VIDEO_LENGTH = 10
+VIDEO_LENGTH = 5
 FPS = 24
 MIN_AREA_WIDTH = 8
 COMPRESSION_LEVEL = 2 #The higher the lower compression
@@ -42,6 +42,7 @@ def record_frames(pos1, pos2, root):
                 time.sleep(1/FPS-delta)
             frame_start = time.perf_counter()
     
+    # TODO return frames for more procedural code
     #return frames
     write_video(pos1, pos2, frames, root)
 
