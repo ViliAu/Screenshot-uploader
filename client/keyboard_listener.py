@@ -1,4 +1,5 @@
 from pynput import keyboard
+
 import screenshotter
 
 def on_start():

@@ -154,6 +154,10 @@ cython_debug/
 # Test images and videos
 *.png
 *.mp4*
+media/
+
+# User data
+cfg/
 
 # Node.js
 

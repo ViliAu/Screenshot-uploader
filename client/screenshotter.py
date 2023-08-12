@@ -1,4 +1,6 @@
-import sclibrary.app_gui as app_gui 
+from tkinter import Tk
+
+from sclibrary.app_gui import AppGui
 #import util.keyboard_listener as key_listener 
 
 #def init_listener():
@@ -6,7 +8,9 @@ import sclibrary.app_gui as app_gui
 
 def init_root():
     # setup root
-    root = app_gui.setup_overlay()
+    root = Tk()
+    
+    app_gui = AppGui(root)
     
     # Start main loop
     root.mainloop()

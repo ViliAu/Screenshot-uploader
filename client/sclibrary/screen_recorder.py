@@ -3,13 +3,12 @@ import mss.tools
 import cv2
 import numpy
 import time
-import sclibrary.multi_monitor_util as mmu
-import sclibrary.app_gui as gui
 
-VIDEO_LENGTH = 5
-FPS = 24
+from sclibrary.screen_util import get_screen_bounds
+from sclibrary.settings import get_settings_data
+
 MIN_AREA_WIDTH = 8
-COMPRESSION_LEVEL = 2 #The higher the lower compression
+COMPRESSION_LEVEL = -1 #Higher = more compression
 
 def take_screenshot(pos1, pos2):
     # Normalize area
@@ -17,13 +16,15 @@ def take_screenshot(pos1, pos2):
     # Check if the picture is too small
     if (bounds[2]-bounds[0] < MIN_AREA_WIDTH or bounds[3]-bounds[1] < MIN_AREA_WIDTH):
         return
-    print(bounds)
+
     # Take pic from the area
     with mss.mss() as sct:
         img = sct.grab(bounds)
-        mss.tools.to_png(img.rgb, img.size, output="Picture.png")
+        return img
 
-def record_frames(pos1, pos2, root):
+def record_frames(pos1, pos2):
+    fps = int(get_settings_data()['VIDEO']['FramesPerSecond'])
+    length = float(get_settings_data()['VIDEO']['VideoLength'])
     bounds = get_screen_bounds(pos1, pos2)
     # Check if the picture is too small
     if (bounds[2]-bounds[0] < MIN_AREA_WIDTH or bounds[3]-bounds[1] < MIN_AREA_WIDTH):
@@ -31,34 +32,15 @@ def record_frames(pos1, pos2, root):
     frames = []
 
     with mss.mss() as sct:
+        # TODO Dynamical compression level
         sct.compression_level = COMPRESSION_LEVEL
         frame_start = time.perf_counter()
         start = time.perf_counter()
         # TODO More accurate frame counter
-        while (frame_start < VIDEO_LENGTH + start):
+        while (frame_start < length + start):
             frames.append(numpy.array(sct.grab(bounds)))
             delta = time.perf_counter() - frame_start
-            if (delta < float(1/FPS)):
-                time.sleep(1/FPS-delta)
+            if (delta < float(1/fps)):
+                time.sleep(1/fps-delta)
             frame_start = time.perf_counter()
-    
-    # TODO return frames for more procedural code
-    #return frames
-    write_video(pos1, pos2, frames, root)
-
-def write_video(pos1, pos2, frames, root):
-    fourcc = cv2.VideoWriter_fourcc(*'XVID')
-    area = get_video_resolution(get_screen_bounds(pos1, pos2))
-    print(f"{len(frames)/VIDEO_LENGTH} fps")
-    video = cv2.VideoWriter("output.mp4v", fourcc, len(frames)/VIDEO_LENGTH, area)
-    for frame in frames:
-        video.write(frame)
-    video.release()
-    root.after(10, root.destroy) # TODO Workaround korjaa joskus
-
-def get_screen_bounds(pos1, pos2):
-    of = mmu.screenshot_offset
-    return (min(pos1[0], pos2[0]) + of[0], min(pos1[1], pos2[1]) + of[1], max(pos1[0], pos2[0]) + of[0], max(pos1[1], pos2[1]) + of[1])
-
-def get_video_resolution(bounds):
-    return (bounds[2]-bounds[0], bounds[3]-bounds[1])
+    return frames
