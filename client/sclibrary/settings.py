@@ -63,8 +63,7 @@ class Settings:
         settings_data['VIDEO']['FramesPerSecond'] = str(self.int_fps.get())
         settings_data['VIDEO']['VideoLength'] = str(self.double_len.get())
         try:
-            if not save_settings():
-                messagebox.showerror('Error', 'Unable to save settings.')
+            save_settings()
         except:
             messagebox.showerror('Error', 'Unable to save settings: ' + traceback.format_exc())
         finally:
@@ -82,4 +81,4 @@ def load_settings():
     settings_data = read_settings()
 
 def save_settings():
-    return write_settings(settings_data)
+    write_settings(settings_data)

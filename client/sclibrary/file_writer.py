@@ -8,8 +8,8 @@ import cv2
 from sclibrary.screen_util import get_screen_bounds, get_video_resolution
 
 SETTINGS_PATH = "./cfg/cfg.cfg"
-IMAGE_PATH = "./media/images/"
-VIDEO_PATH = "./media/videos/"
+IMAGE_PATH = "./media/images"
+VIDEO_PATH = "./media/videos"
 
 def read_settings() -> configparser.ConfigParser: 
     config = configparser.ConfigParser()
@@ -28,30 +28,27 @@ def assign_defaults():
                     'SaveLocalCopy': True}
     return config
 
-# TODO: Throw error
 def write_settings(config: configparser.ConfigParser):
     if config == None:
-        print("No data passed!")
-        return False
+        raise ValueError("No settings data passed!")
     
-    if not os.path.exists(SETTINGS_PATH):
-        os.makedirs(SETTINGS_PATH)
+    if not os.path.exists('./cfg'):
+        os.makedirs('./cfg')
     try:
         with open(SETTINGS_PATH, "w") as cfgfile:
             config.write(cfgfile)
-            return True
     except:
         traceback.print_exc()
-        return False
+        raise
 
 # TODO Filename
 def write_image(img):
-    image_name = IMAGE_PATH + "Picture.png"
+    image_name = IMAGE_PATH + "/Picture.png"
     if img == None:
         raise ValueError("No image data passed!")
     
-    if not os.path.exists(VIDEO_PATH):
-        os.makedirs(VIDEO_PATH)
+    if not os.path.exists(IMAGE_PATH):
+        os.makedirs(IMAGE_PATH)
     try:
         mss.tools.to_png(img.rgb, img.size, output=image_name)
         return image_name
@@ -63,7 +60,7 @@ def write_video(pos1, pos2, frames, length):
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')
     area = get_video_resolution(get_screen_bounds(pos1, pos2))
     print(f"{len(frames)/length} fps")
-    video_name = VIDEO_PATH  + "output.mp4v"
+    video_name = VIDEO_PATH  + "/output.mp4v"
     video = cv2.VideoWriter(video_name, fourcc, len(frames)/length, area)
 
     if not os.path.exists(VIDEO_PATH):
@@ -73,6 +70,7 @@ def write_video(pos1, pos2, frames, length):
             video.write(frame)
         return video_name
     except:
+        traceback.print_exc()
         raise
     finally:
         video.release

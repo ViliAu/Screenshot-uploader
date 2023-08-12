@@ -5,8 +5,9 @@ const upload = multer({ dest: 'media/' })
 
 const uploadController = require('../controllers/upload')
 
-// Handles traffic to /image route
-// TODO create a middleware for time parsing
-router.post('/image', upload.single('image'), uploadController.uploadImage)
+// Handles traffic to /api/upload/image route
+router.post('/image', upload.single('media'), uploadController.uploadImage);
+
+router.post('/video', upload.single('media'), uploadController.uploadImage);
 
 module.exports = router

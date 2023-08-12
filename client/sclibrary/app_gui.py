@@ -1,6 +1,5 @@
 # This class handles the grayed-out overlay which occurs when the program is started
 
-import threading
 import traceback
 import tkinter as tk
 import time
@@ -11,7 +10,8 @@ import sclibrary.screen_recorder as screen_recorder
 import sclibrary.screen_util as screen_util
 from sclibrary.settings import Settings, get_settings_data
 from sclibrary.threading_handler import ScreenRecorderWorker, VideoWriterWorker, GeneralWorker
-from sclibrary.file_writer import write_image, write_video
+from sclibrary.file_writer import write_image
+from sclibrary.networker import upload_media
 
 class AppGui:
 
@@ -86,7 +86,8 @@ class AppGui:
         self.enable_overlay(False)
         img = screen_recorder.take_screenshot(self.pos1, self.pos2)
         try:
-            write_image(img=img)
+            filename = write_image(img=img)
+            upload_media(filename, "image")
         except Exception:
             messagebox.showerror('Error', 'Unable to save image: ' + traceback.format_exc())
         finally:
@@ -98,7 +99,7 @@ class AppGui:
         self.recording = True
         self.frames = []
         self.canvas.config(cursor="arrow")
-        video_thread = ScreenRecorderWorker(callback=self.handle_video, pos1=self.pos1, pos2=self.pos2)
+        video_thread = ScreenRecorderWorker(on_success=self.handle_video, on_error=self.on_error, pos1=self.pos1, pos2=self.pos2)
         progress_bar_thread = GeneralWorker(executable=self.update_progress_bar)
         video_thread.start()
         progress_bar_thread.start()
@@ -120,15 +121,21 @@ class AppGui:
     # TODO Error handling (on_success, on_exception callbacks)
     def handle_video(self, frames):
         self.canvas.delete("all")
-        thread = VideoWriterWorker(callback=self.handle_upload, pos1=self.pos1, pos2=self.pos2, frames=frames)
+        thread = VideoWriterWorker(on_success=self.handle_upload, on_error=self.on_error, pos1=self.pos1, pos2=self.pos2, frames=frames)
         thread.start()
     
     def handle_upload(self, video_name):
         print(video_name)
-        self.close_program()
+        thread = GeneralWorker(executable=upload_media, on_success=self.close_program, on_error=self.on_error, args=(video_name, "video"))
+        thread.start()
 
-    def on_error(self):
-        messagebox.showerror('Error', traceback.format_exc())
+    def on_error(self, *message):
+        msg = ''
+        for m in message:
+            if m:
+                msg += str(m)
+        msg = msg if len(msg) > 0 else "An error has occurred."
+        messagebox.showerror('Error', msg)
         self.close_program()
 
     def enable_overlay(self, enabled=True):
@@ -142,6 +149,7 @@ class AppGui:
         self.video_mode = enabled
 
     def close_program(self, event=None):
+        print("OK")
         self.master.quit()
         self.master.destroy()
 

@@ -10,5 +10,6 @@ const uploadVideo = (req, res, next) => {
 }
 
 module.exports = {
-    uploadImage: uploadImage
+    uploadImage: uploadImage,
+    uploadVideo: uploadVideo
 }
