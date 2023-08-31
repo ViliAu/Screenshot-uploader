@@ -64,7 +64,7 @@ class AppGui:
 
     # Open context menu
     def right_click(self, event):
-        if (self.pos1[0] > -1):
+        if (self.pos1 != (-1, -1)):
             return
         try:
             self.cmenu.tk_popup(event.x_root, event.y_root)

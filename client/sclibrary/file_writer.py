@@ -10,6 +10,7 @@ from sclibrary.screen_util import get_screen_bounds, get_video_resolution
 SETTINGS_PATH = "./cfg/cfg.cfg"
 IMAGE_PATH = "./media/images"
 VIDEO_PATH = "./media/videos"
+FOURCC = "avc3"
 
 def read_settings() -> configparser.ConfigParser: 
     config = configparser.ConfigParser()
@@ -57,10 +58,10 @@ def write_image(img):
 
 # TODO Filename
 def write_video(pos1, pos2, frames, length):
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')
+    fourcc = cv2.VideoWriter_fourcc(*FOURCC)
     area = get_video_resolution(get_screen_bounds(pos1, pos2))
     print(f"{len(frames)/length} fps")
-    video_name = VIDEO_PATH  + "/output.mp4v"
+    video_name = VIDEO_PATH  + "/output.mp4"
     video = cv2.VideoWriter(video_name, fourcc, len(frames)/length, area)
 
     if not os.path.exists(VIDEO_PATH):
